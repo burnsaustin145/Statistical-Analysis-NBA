@@ -10,6 +10,8 @@ library(dplyr)
 library(corrplot)
 library(ROCR)
 library(ResourceSelection)
+library(LaplacesDemon)
+library(corrplot)
 ```
 
 
@@ -22,10 +24,6 @@ qqnorm(dat$effective_fg_pct, main="Effective")
 qqline(dat$effective_fg_pct)
 qqnorm(dat$field_goals_pct, main="FGP")
 qqline(dat$field_goals_pct)
-```
-
-```{r}
-boxplot(gamesSubSet)
 ```
 
 ```{r}
@@ -62,14 +60,13 @@ plot(naiveFit)
 
 
 ```{r}
-subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
+attach(dat)
+# can't really use offensive & defensive together
+subSet2 <- data.frame(result, offensive_rating, defensive_rating)
 subSet2 <- subSet2 %>%
   mutate(result = if_else(result == "win", 1, 0))
 pairs(subSet2)
-attach(dat)
-subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
-subSet2 <- subSet2 %>%
-mutate(result = if_else(result == "win", 1, 0))
+
 detach(dat)
 attach(subSet2)
 pairs(subSet2)
@@ -77,33 +74,45 @@ GLM1 <- glm(result ~ efficiency_game_score, family=binomial("logit"))
 summary(GLM1)
 
 plot(GLM1)
+index=order(efficiency_game_score)
 
 plot(efficiency_game_score, result, xlab = "Efficiency", ylab = "Success")
 lines(efficiency_game_score[index],fitted(GLM1)[index],lwd=2)
 lines(lowess(efficiency_game_score, result),col="red",lwd=2)
 legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
-multiGLM1 <- glm(result ~ efficiency_game_score + offensive_rating + defensive_rating, family=binomial("logit"))
-summary(multiGLM1)
-```
 
+# make a multiplie logistic regression model
+
+multiGLM1 <- glm(result ~ offensive_rating + , family=binomial("logit"))
+summary(multiGLM1)
+detach(subSet2)
+```
+<!-- Efficiency Game Score: (Points) + (0.4*Field Goals Made) - (0.7*Field Goals Attempted) - (0.4*Free Throws Missed) + (0.7*Offensive Rebounds) + (0.3*Defensive Rebounds) + (Steals) + (0.7*Assists) + (0.7*Blocks) – (0.4*Personal Fouls) – (Turnovers) -->
 
 ```{r}
-qqnorm(assists_turnover_ratio)
-qqline(assists_turnover_ratio)
-# assist/turnover is not normal
-qqnorm(log(assists_turnover_ratio))
-qqline(log(assists_turnover_ratio))
+attach(dat)
+# select efficiency_game_score and defensive rating
+subSet2 <- data.frame(result, efficiency_game_score, defensive_rating)
+subSet2 <- subSet2 %>%
+  mutate(result = if_else(result == "win", 1, 0))
+pairs(subSet2)
 
-multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
+detach(dat)
+attach(subSet2)
+
+predictorCor <- cor(subSet2)
+corrplot(predictorCor)
+
+# make a multiplie logistic regression model
+
+multiGLM1 <- glm(result ~ efficiency_game_score + defensive_rating, family=binomial("logit"))
 summary(multiGLM1)
-
-multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
-summary(multiGLM1)
-
+detach(subSet2)
 ```
-
+*We see, perhaps unsurprisingly, that both efficiency_game_score and defensive_rating are significant predictors in a team's result.*
 
 ```{r}
+# doing some testing on our first multiGLM model
 hoslem.test(result, fitted(multiGLM1))
 
 ### Get the predicted values of the model
@@ -125,13 +134,32 @@ plot(acc)
 which.max(unlist(acc@y.values)) # the highest accuracy
 unlist(acc@y.values)[9] # 80%
 unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
+```
 
 
 
-currPredictors <- data.frame(three_points_pct, two_points_pct, assists_turnover_ratio)
-pairs(currPredictors)
-correlation <- cor(currPredictors)
-corrplot(correlation)
+```{r}
+attach(dat)
+qqnorm(assists_turnover_ratio)
+qqline(assists_turnover_ratio)
+# assist/turnover is not normal
+qqnorm(log(assists_turnover_ratio))
+qqline(log(assists_turnover_ratio))
+
+multiGLM2 <- glm(result ~ three_points_pct + two_points_pct + assists_turnover_ratio, family=binomial("logit"))
+summary(multiGLM2)
+
+multiGLM2.1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
+summary(multiGLM2.1)
+detach(dat)
+```
+*Transforming assist/turnover ratio logarithmically did not improve the p-value significantly.*
+
+```{r}
+# detaching from part 1 activities
+detach(subSet2)
+detach(dat)
+detach(gamesSubSet)
 ```
 
 
@@ -164,54 +192,101 @@ detach(subSet3)
 
 <!-- Attempting to convert attendance into crowd factor ie how full is the stadium -->
 ```{r}
+# read data with capacity and attendance
 dat <- read.csv("tidy200_conf_true.csv")
 attach(dat)
 dat <- dat %>%
   mutate(capacity = strtoi(capacity))
 
-cfGen <- function(cf) {
-  y <- log((cf)/(1-cf))
-  return(y)
-}
-
 crowdFactor <- as.numeric(attendance) / capacity
 subSet3 <- data.frame(result, crowdFactor, home_away, fast_break_made, blocks)
-# normalize crowd factor for > 1
+rm(crowdFactor)
+# keep crowd factor on open interval (0, 1)
 subSet3 <- subSet3 %>%
   mutate(crowdFactor = if_else(crowdFactor > 1 | crowdFactor == 1, .999999, crowdFactor))
 subSet3 <- subSet3 %>%
   mutate(crowdFactor = if_else(crowdFactor == 0, .00000001, crowdFactor))
+
 detach(dat)
 attach(subSet3)
-rm(crowdFactor)
+# cleaning up subSet3 and adding croud factor transformation (improved p-val)
 subSet3 <- na.omit(subSet3)
 subSet3 <- subSet3 %>%
   mutate(home_away = if_else(home_away == "home", 1, 0))
 subSet3 <- subSet3 %>%
-  mutate(crowdFactor = if_else(home_away == 1, cfGen(crowdFactor), -cfGen(crowdFactor)))
+  mutate(crowdFactor = if_else(home_away == 1, cfGen2(crowdFactor, "home"), cfGen2(crowdFactor, "away")))
 subSet3 <- subSet3 %>%
   mutate(result = if_else(result == "win", 1, 0))
 detach(subSet3)
 ```
 
 ```{r}
+# testing crowdFactor
 attach(subSet3)
 multiGLM2 <- glm(result ~ crowdFactor)
 summary(multiGLM2)
+hist(crowdFactor, breaks=100)
 detach(subSet3)
 ```
+
+*We see a somewhat significant p-value for our crowdFactor predictor.*
+
+```{r}
+attach(subSet3)
+hoslem.test(result, fitted(multiGLM2))
+
+### Get the predicted values of the model
+pred = predict(multiGLM2,type="response")
+#### Get predictions with true positive rate (tpr) and false positive rate (fpr).
+pred1 = prediction(pred, labels = result)
+roc = performance(pred1,"tpr", "fpr")
+roc
+### Create and plot the data for ROC Curve
+plot(roc) # ROC curve
+abline(0,1)
+### Find the area under the curve (auc)
+auc = performance(pred1, measure = "auc")
+auc@y.values
+# Accuracy
+acc = performance(pred1, measure = "acc")
+plot(acc)
+### Find the cutoff using the highest accuracy
+which.max(unlist(acc@y.values)) # the highest accuracy
+unlist(acc@y.values)[9] # 80%
+unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
+detach(subSet3)
+```
+
 <!-- p-val of .09 attained for crowd factor, kinda promising . away gets /10 on crowd factor -->
 <!-- p-val of .13 for crowd factor, with exp(-cf) -->
 <!-- p-val of .067 acheived with cfg(+/-logit(cf)) -->
-```{r}
-qqnorm(crowdFactor)
-qqline(crowdFactor)
-hist(crowdFactor)
-```
+<!-- p-val of 0.082 for special logit:[0, 1]-> [0, 1] -->
 
 ```{r}
+# detaching stuff
 detach(dat)
 detach(subSet3)
+```
+<!-- Functions for project use -->
+```{r}
+# function for crowd factor 
+cfGen1 <- function(cf) {
+  y <- exp(logit(cf)) / (1 + exp(logit(cf)))
+  return(y)
+}
+# function for crowd factor
+cfGen2 <- function(cf, crowd) {
+  if (crowd == "home") {
+    y <- 100 * log((cf)/(1-cf))  
+    return(y)
+  }
+  else {
+    y <- 100 * log((cf)/(1-cf))
+    return(-y)
+  }
+  
+  return(y)
+}
 
 ```
 
