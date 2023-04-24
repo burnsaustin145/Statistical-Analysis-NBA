@@ -1,0 +1,163 @@
+---
+title: 'Final Project'
+author: "Austin Burns"
+date: "4/23/2023"
+output: pdf_document
+---
+
+```{r}
+library(dplyr)
+library(corrplot)
+library(ROCR)
+library(ResourceSelection)
+```
+
+
+```{r}
+dat <- data.frame(read.csv("tidy200.csv"))
+attach(dat)
+hist(dat$field_goals_pct, breaks = 100)
+hist(dat$effective_fg_pct, breaks = 100)
+qqnorm(dat$effective_fg_pct, main="Effective")
+qqline(dat$effective_fg_pct)
+qqnorm(dat$field_goals_pct, main="FGP")
+qqline(dat$field_goals_pct)
+```
+
+```{r}
+boxplot(gamesSubSet)
+```
+
+```{r}
+gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+detach(dat)
+attach(gamesSubSet)
+gamesSubSet <- gamesSubSet %>%
+  mutate(attendance = as.numeric(attendance))
+gamesSubSet <- gamesSubSet %>%
+  mutate(result = if_else(result == "win", 1, 0))
+
+pairs(gamesSubSet)
+qqnorm(two_points_pct)
+qqline(two_points_pct)
+
+threePtPcModel <- lm(points ~ three_points_pct)
+summary(threePtPcModel)
+
+plot(three_points_pct, points)
+abline(threePtPcModel)
+plot(threePtPcModel)
+
+twoPtPcModel <- lm(points ~ two_points_pct)
+summary(twoPtPcModel)
+
+plot(two_points_pct, points)
+abline(twoPtPcModel)
+plot(twoPtPcModel)
+
+naiveFit <- lm(points ~ three_points_pct + two_points_pct + free_throws_pct)
+summary(naiveFit)
+plot(naiveFit)
+```
+
+
+```{r}
+subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
+subSet2 <- subSet2 %>%
+  mutate(result = if_else(result == "win", 1, 0))
+pairs(subSet2)
+attach(dat)
+subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
+subSet2 <- subSet2 %>%
+mutate(result = if_else(result == "win", 1, 0))
+detach(dat)
+attach(subSet2)
+pairs(subSet2)
+GLM1 <- glm(result ~ efficiency_game_score, family=binomial("logit"))
+summary(GLM1)
+
+plot(GLM1)
+
+plot(efficiency_game_score, result, xlab = "Efficiency", ylab = "Success")
+lines(efficiency_game_score[index],fitted(GLM1)[index],lwd=2)
+lines(lowess(efficiency_game_score, result),col="red",lwd=2)
+legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
+multiGLM1 <- glm(result ~ efficiency_game_score + offensive_rating + defensive_rating, family=binomial("logit"))
+summary(multiGLM1)
+```
+
+
+```{r}
+qqnorm(assists_turnover_ratio)
+qqline(assists_turnover_ratio)
+# assist/turnover is not normal
+qqnorm(log(assists_turnover_ratio))
+qqline(log(assists_turnover_ratio))
+
+multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
+summary(multiGLM1)
+
+multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
+summary(multiGLM1)
+
+```
+
+
+```{r}
+hoslem.test(result, fitted(multiGLM1))
+
+### Get the predicted values of the model
+pred = predict(multiGLM1,type="response")
+#### Get predictions with true positive rate (tpr) and false positive rate (fpr).
+pred1 = prediction(pred, labels = result)
+roc = performance(pred1,"tpr", "fpr")
+roc
+### Create and plot the data for ROC Curve
+plot(roc) # ROC curve
+abline(0,1)
+### Find the area under the curve (auc)
+auc = performance(pred1, measure = "auc")
+auc@y.values
+# Accuracy
+acc = performance(pred1, measure = "acc")
+plot(acc)
+### Find the cutoff using the highest accuracy
+which.max(unlist(acc@y.values)) # the highest accuracy
+unlist(acc@y.values)[9] # 80%
+unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
+
+
+
+currPredictors <- data.frame(three_points_pct, two_points_pct, assists_turnover_ratio)
+pairs(currPredictors)
+correlation <- cor(currPredictors)
+corrplot(correlation)
+```
+
+
+
+```{r}
+# getting data with home/away stat
+dat <- read.csv("tidy200_conf.csv")
+attach(dat)
+subSet3 <- data.frame(result, attendance, home_away, fast_break_made, blocks)
+detach(dat)
+attach(subSet3)
+subSet3 <- subSet3 %>%
+  mutate(attendance = strtoi(attendance))
+subSet3 <- subSet3 %>%
+  mutate(home_away = if_else(home_away == "home", 1, 0))
+subSet3 <- subSet3 %>%
+  mutate(attendance = if_else(home_away == 1, attendance, (attendance * 2) / attendance))
+subSet3 <- subSet3 %>%
+  mutate(result = if_else(result == "win", 1, 0))
+detach(subSet3)
+```
+
+
+```{r}
+attach(subSet3)
+multiGLM2 <- glm(result ~ attendance + fast_break_made + blocks)
+summary(multiGLM2)
+detach(subSet3)
+```

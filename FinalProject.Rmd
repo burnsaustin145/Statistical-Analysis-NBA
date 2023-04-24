@@ -1,0 +1,660 @@
+1677773470262:?sampel()
+1677773473564:sample()
+1677773477254:?sample()
+1677773498386:curr <- sample(0:100, 1000)
+1677773511790:curr <- sample(0:100, 1000, replace = TRUE)
+1677773533700:?lm()
+1677773625568:fit = lm(curr)
+1677773705497:curr <- c(0:100, curr)
+1677773740613:fit = lm(curr[0]~curr[1])
+1677773746791:fit = lm(curr[0]~curr[1], curr)
+1677773779962:curr <- data.frame(curr)
+1677773795431:fit = lm(curr[0]~curr[1], curr)
+1677773803622:View(curr)
+1677774144352:dat = c(0:1000, sample(0:100, 1000, replace = TRUE))
+1677774154656:dat <- data.frame(dat)
+1677774167651:View(dat)
+1677774190433:?data.frame()
+1677774252324:first <- c(0:1000)
+1677774271491:res <- sample(0:100, 1000, replace=TRUE)
+1677774289959:dat <- data.frame(first, res)
+1677774312396:first <- c(0:1001)
+1677774315586:dat <- data.frame(first, res)
+1677774324207:first <- c(1:1000)
+1677774325685:dat <- data.frame(first, res)
+1677774357094:fit = lm(res~first, data = )
+1677774366808:summary(fit)
+1677774369427:plot(fit)
+1677774391397:plot(fit)
+1677774398417:plot(fit)
+1677774414041:plot(first, res)
+1677774421736:abline(fit)
+1682192495276:dat <- read.csv("tidy200.csv")
+1682192498346:View(dat)
+1682192498559:View(dat)
+1682192520707:dat <- read.csv("tidy200.csv")
+1682192520762:attach(dat)
+1682192570458:hist(dat$field_goals_pct)
+1682192613377:hist(dat$field_goals_pct)
+1682192613392:hist(dat$effective_fg_pct)
+1682192639857:hist(dat$field_goals_pct, breaks = 20)
+1682192639860:hist(dat$effective_fg_pct)
+1682192652948:hist(dat$field_goals_pct, breaks = 100)
+1682192652951:hist(dat$effective_fg_pct)
+1682192799854:hist(dat$field_goals_pct, breaks = 100)
+1682192799857:hist(dat$effective_fg_pct, breaks = 100)
+1682192827092:hist(dat$field_goals_pct, breaks = 100)
+1682192827095:hist(dat$effective_fg_pct, breaks = 100)
+1682192827103:qqnorm(dat$effective_fg_pct)
+1682193184346:hist(dat$field_goals_pct, breaks = 100)
+1682193184349:hist(dat$effective_fg_pct, breaks = 100)
+1682193184358:qqnorm(dat$effective_fg_pct)
+1682193184369:qqline()
+1682193190352:hist(dat$field_goals_pct, breaks = 100)
+1682193190354:hist(dat$effective_fg_pct, breaks = 100)
+1682193190364:qqnorm(dat$effective_fg_pct)
+1682193190375:qqline(dat$effective_fg_pct)
+1682194378139:hist(dat$field_goals_pct, breaks = 100)
+1682194378142:hist(dat$effective_fg_pct, breaks = 100)
+1682194378151:qqnorm(dat$effective_fg_pct)
+1682194378162:qqline(dat$effective_fg_pct)
+1682194378164:qqnorm(dat$field_goals_pct)
+1682194378175:qqline(dat$field_goals_pct)
+1682194397984:hist(dat$field_goals_pct, breaks = 100)
+1682194397987:hist(dat$effective_fg_pct, breaks = 100)
+1682194397996:qqnorm(dat$effective_fg_pct, main="Effective")
+1682194398007:qqline(dat$effective_fg_pct)
+1682194398010:qqnorm(dat$field_goals_pct)
+1682194398021:qqline(dat$field_goals_pct)
+1682194413535:hist(dat$field_goals_pct, breaks = 100)
+1682194413538:hist(dat$effective_fg_pct, breaks = 100)
+1682194413547:qqnorm(dat$effective_fg_pct, main="Effective")
+1682194413558:qqline(dat$effective_fg_pct)
+1682194413559:qqnorm(dat$field_goals_pct, main="FGP")
+1682194413570:qqline(dat$field_goals_pct)
+1682194575141:?subset()
+1682194625950:dat <- data.frame(read.csv("tidy200.csv"))
+1682194625980:attach(dat)
+1682194633985:dat <- read.csv("tidy200.csv")
+1682194634014:attach(dat)
+1682194642453:hist(dat$field_goals_pct, breaks = 100)
+1682194642457:hist(dat$effective_fg_pct, breaks = 100)
+1682194642466:qqnorm(dat$effective_fg_pct, main="Effective")
+1682194642478:qqline(dat$effective_fg_pct)
+1682194642479:qqnorm(dat$field_goals_pct, main="FGP")
+1682194642491:qqline(dat$field_goals_pct)
+1682194879531:gamesSubSet <- data.frame(c(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att))
+1682194892297:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682194908425:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682194908429:boxplot(gamesSubSet)
+1682195009355:install.packages("tidyverse")
+1682195388814:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682195388819:gamesSubSet %>%
+1682195388820:mutate(result = if(result=="win") 1 else 0)
+1682195409249:library(dplyr)
+1682195409540:dat <- read.csv("tidy200.csv")
+1682195409570:attach(dat)
+1682195413153:hist(dat$field_goals_pct, breaks = 100)
+1682195413158:hist(dat$effective_fg_pct, breaks = 100)
+1682195413166:qqnorm(dat$effective_fg_pct, main="Effective")
+1682195413177:qqline(dat$effective_fg_pct)
+1682195413178:qqnorm(dat$field_goals_pct, main="FGP")
+1682195413189:qqline(dat$field_goals_pct)
+1682195417746:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682195417750:gamesSubSet %>%
+1682195417751:mutate(result = if(result=="win") 1 else 0)
+1682195417919:boxplot(gamesSubSet)
+1682195630877:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682195630882:gamesSubSet %>%
+1682195630883:mutate(result = case_when(result == "win" ~ 1, result == "loss" ~ 0))
+1682195630953:boxplot(gamesSubSet)
+1682195712865:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682195712869:gamesSubSet %>%
+1682195712869:mutate(result = case_when(result == "win" ~ 1, result == "loss" ~ 0))
+1682195712877:boxplot(gamesSubSet)
+1682195719562:gamesSubSet %>%
+1682195719563:mutate(result = case_when(result == "win" ~ 1, result == "loss" ~ 0))
+1682195801918:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682195801923:gamesSubSet %>%
+1682195801923:mutate(resultNum = case_when(result == "win" ~ 1, result == "loss" ~ 0))
+1682195801931:boxplot(gamesSubSet)
+1682195837130:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682195837134:gamesSubSet %>%
+1682195837135:mutate(resultNum = case_when(result == "win" ~ 1, result == "loss" ~ 0))
+1682195837143:gamesSubSet <- gamesSubSet - result
+1682196051187:gamesSubSet %>%
+1682196051187:mutate(result = as.numeric(result))
+1682196072364:gamesSubSet %>%
+1682196072365:mutate(attendance = as.numeric(attendance))
+1682196090945:gamesSubSet %>%
+1682196090945:mutate(resultNum = as.numberic(case_when(result == "win" ~ 1, result == "loss" ~ 0)))
+1682196098393:gamesSubSet %>%
+1682196098394:mutate(resultNum = as.numeric(case_when(result == "win" ~ 1, result == "loss" ~ 0)))
+1682196125662:gamesSubSet %>%
+1682196125663:mutate(resultNum = case_when(result == "win" ~ "1", result == "loss" ~ "1"))
+1682196149042:gamesSubSet %>%
+1682196149043:mutate(result = case_when(result == "win" ~ "1", result == "loss" ~ "1"))
+1682196389976:gamesSubSet %>%
+1682196389977:mutate(resultNum = if_else(result == "win", 1, 0))
+1682196406590:gamesSubSet <- gamesSubSet %>%
+1682196406591:mutate(resultNum = if_else(result == "win", 1, 0))
+1682196417302:gamesSubSet <- gamesSubSet %>%
+1682196417303:mutate(result = if_else(result == "win", 1, 0))
+1682196428012:gamesSubSet <- gamesSubSet %>%
+1682196428012:mutate(attendance = as.numeric(attendance))
+1682196439933:gamesSubSet <- gamesSubSet %>%
+1682196439933:mutate(result = if_else(result == "win", 1, 0))
+1682196441830:boxplot(gamesSubSet)
+1682196451681:scatterplot(gamesSubSet)
+1682196457880:scatter(gamesSubSet)
+1682196506465:pairs(gamesSubSet)
+1682196592022:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682196597303:gamesSubSet <- gamesSubSet %>%
+1682196597304:mutate(attendance = as.numeric(attendance))
+1682196607109:gamesSubSet <- gamesSubSet %>%
+1682196607110:mutate(result = if_else(result == "win", 1, 0))
+1682196609754:pairs(gamesSubSet)
+1682196921921:naiveFit <- lm(points ~ three_points_pct + two_points_pct + free_throws_pct)
+1682196934976:summary(naiveFit)
+1682196965292:AIC(naiveFit)
+1682196978544:step(naiveFit)
+1682197059110:step(naiveFit, scope = c(points ~ three_points_pct, points ~ three_points_pct + two_points_pct + free_throws_pct))
+1682200607248:basicFit <- lm(points ~ three_points_pct)
+1682200616558:summary(basicFit)
+1682200847335:qqnorm(dat$three_points_pct)
+1682200847969:qqline(dat$three_points_pct)
+1682200854823:qqnorm(dat$three_points_pct)
+1682200854827:qqline(dat$three_points_pct)
+1682200988906:qqnorm(two_points_pct)
+1682200988910:qqline(two_points_pct)
+1682201042260:threePtPcModel <- lm(points ~ three_points_pct)
+1682201042278:summary(threePtPcModel)
+1682201042284:twoPtPcModel <- lm(points ~ two_points_pct)
+1682201042313:summary(twoPtPcModel)
+1682201132648:threePtPcModel <- lm(points ~ three_points_pct)
+1682201132665:summary(threePtPcModel)
+1682201132670:twoPtPcModel <- lm(points ~ two_points_pct)
+1682201132689:summary(twoPtPcModel)
+1682201132694:plot(points, two_points_pct)
+1682201132698:abline(twoPtPcModel)
+1682201146991:plot(points, two_points_pct)
+1682201146995:abline(twoPtPcModel)
+1682201167523:plot(two_points_pct, points)
+1682201168095:abline(twoPtPcModel)
+1682201173096:plot(two_points_pct, points)
+1682201173099:abline(twoPtPcModel)
+1682201432834:threePtPcModel <- lm(points ~ three_points_pct)
+1682201432851:summary(threePtPcModel)
+1682201432856:plot(three_points_pct, points)
+1682201432860:abline(threePtPcModel)
+1682201432861:twoPtPcModel <- lm(points ~ two_points_pct)
+1682201432880:summary(twoPtPcModel)
+1682201432886:plot(two_points_pct, points)
+1682201432896:abline(twoPtPcModel)
+1682201560490:threePtPcModel <- lm(points ~ three_points_pct)
+1682201560507:summary(threePtPcModel)
+1682201560513:plot(three_points_pct, points)
+1682201560517:abline(threePtPcModel)
+1682201560518:plot(threePtPcModel)
+1682201568564:twoPtPcModel <- lm(points ~ two_points_pct)
+1682201568581:summary(twoPtPcModel)
+1682201568587:plot(two_points_pct, points)
+1682201568591:abline(twoPtPcModel)
+1682201568592:plot(twoPtPcModel)
+1682201913407:twoPtPcModel <- lm(points ~ two_points_pct)
+1682201913444:summary(twoPtPcModel)
+1682201913450:plot(two_points_pct, points)
+1682201913454:abline(twoPtPcModel)
+1682201913455:plot(twoPtPcModel)
+1682202054989:naiveFit <- lm(points ~ three_points_pct + two_points_pct + free_throws_pct)
+1682202055010:summary(naiveFit)
+1682202063755:plot(naiveFit)
+1682202188154:dat <- read.csv("tidy200.csv")
+1682202191433:hist(dat$field_goals_pct, breaks = 100)
+1682202191435:hist(dat$effective_fg_pct, breaks = 100)
+1682202191445:qqnorm(dat$effective_fg_pct, main="Effective")
+1682202191455:qqline(dat$effective_fg_pct)
+1682202191456:qqnorm(dat$field_goals_pct, main="FGP")
+1682202191466:qqline(dat$field_goals_pct)
+1682202191468:qqnorm(dat$three_points_pct)
+1682202191478:qqline(dat$three_points_pct)
+1682202193832:gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+1682202193837:detach(dat)
+1682202193838:attach(gamesSubSet)
+1682202193843:gamesSubSet <- gamesSubSet %>%
+1682202193844:mutate(attendance = as.numeric(attendance))
+1682202193898:gamesSubSet <- gamesSubSet %>%
+1682202193899:mutate(result = if_else(result == "win", 1, 0))
+1682202193914:pairs(gamesSubSet)
+1682202197546:qqnorm(two_points_pct)
+1682202197549:qqline(two_points_pct)
+1682202199979:threePtPcModel <- lm(points ~ three_points_pct)
+1682202199996:summary(threePtPcModel)
+1682202200002:plot(three_points_pct, points)
+1682202200006:abline(threePtPcModel)
+1682202200007:plot(threePtPcModel)
+1682202203175:twoPtPcModel <- lm(points ~ two_points_pct)
+1682202203192:summary(twoPtPcModel)
+1682202203197:plot(two_points_pct, points)
+1682202203202:abline(twoPtPcModel)
+1682202203203:plot(twoPtPcModel)
+1682202205842:naiveFit <- lm(points ~ three_points_pct + two_points_pct + free_throws_pct)
+1682202205861:summary(naiveFit)
+1682202205867:plot(naiveFit)
+1682202586505:attach(dat)
+1682202586511:subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
+1682202586514:pairs(subSet2)
+1682202632002:attach(dat)
+1682202632010:subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
+1682202632014:subSet2 <- subSet2 %>%
+1682202632014:mutate(result = if_else(result == "win", 1, 0))
+1682202632018:pairs(subSet2)
+1682202731936:attach(dat)
+1682202731944:subSet2 <- data.frame(result, efficiency_game_score, offensive_rating, defensive_rating)
+1682202731947:subSet2 <- subSet2 %>%
+1682202731948:mutate(result = if_else(result == "win", 1, 0))
+1682202731952:detach(dat)
+1682202731952:attach(subSet2)
+1682202731961:pairs(subSet2)
+1682202784472:GLM1 <- glm(result ~ efficiency_game_score, family=binomial("logit"))
+1682202784474:summary(GLM1)
+1682202784480:plot(GLM1)
+1682204514658:index=order(efficiency_game_score)
+1682204514660:plot(efficiency_game_score, result, xlab = "Efficiency", ylab = "Success")
+1682204514664:lines(efficiency_game_score[index],fitted(GLM1)[index],lwd=2)
+1682204514665:lines(lowess(efficiency_game_score, result),col="red",lwd=2)
+1682204514667:legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
+1682204950277:index=order(efficiency_game_score)
+1682204950279:plot(efficiency_game_score, result, xlab = "Efficiency", ylab = "Success")
+1682204950282:lines(efficiency_game_score[index],fitted(GLM1)[index],lwd=2)
+1682204950284:lines(lowess(efficiency_game_score, result),col="red",lwd=2)
+1682204950286:legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
+1682278144821:multiGLM1 <- glm(result ~ efficiency_game_score + offensive_rating + defensive_rating, family=binomial("logit"))
+1682278144824:summary(multiGLM1)
+1682278562558:multiGLM1 <- glm(result ~ efficiency_game_score + offensive_rating - defensive_rating, family=binomial("logit"))
+1682278562561:summary(multiGLM1)
+1682278576297:multiGLM1 <- glm(result ~ efficiency_game_score + offensive_rating, family=binomial("logit"))
+1682278576299:summary(multiGLM1)
+1682279246002:multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + assists_turnover_ratio, family=binomial("logit"))
+1682279246004:summary(multiGLM1)
+1682279365925:qqnorm(assists_turnover_ratio)
+1682279365929:qqline(assists_turnover_ratio)
+1682279365931:multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + assists_turnover_ratio, family=binomial("logit"))
+1682279365933:summary(multiGLM1)
+1682279472236:qqnorm(assists_turnover_ratio)
+1682279472240:qqline(assists_turnover_ratio)
+1682279472241:# assist/turnover is not normal
+1682279472242:qqnorm(log(assists_turnover_ratio))
+1682279472253:qqline(log(assists_turnover_ratio))
+1682279472254:multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + assists_turnover_ratio, family=binomial("logit"))
+1682279472256:summary(multiGLM1)
+1682279489837:qqnorm(assists_turnover_ratio)
+1682279489842:qqline(assists_turnover_ratio)
+1682279489843:# assist/turnover is not normal
+1682279489843:qqnorm(log(assists_turnover_ratio))
+1682279489854:qqline(log(assists_turnover_ratio))
+1682279489855:multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
+1682279489858:summary(multiGLM1)
+1682281579296:qqnorm(assists_turnover_ratio)
+1682281579300:qqline(assists_turnover_ratio)
+1682281579301:# assist/turnover is not normal
+1682281579301:qqnorm(log(assists_turnover_ratio))
+1682281579312:qqline(log(assists_turnover_ratio))
+1682281579314:multiGLM1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
+1682281579317:summary(multiGLM1)
+1682281579324:library(ResourceSelection)
+1682281579846:hoslem.test(result, fitted(multiGLM1))
+1682281859482:library(ROCR)
+1682281859506:### Get the predicted values of the model
+1682281859507:pred = predict(multiGLM1,type="response")
+1682281859509:#### Get predictions with true positive rate (tpr) and false positive rate (fpr).
+1682281859510:pred1 = prediction(pred, labels = result)
+1682281859531:roc = performance(pred1,"tpr", "fpr")
+1682281859538:roc
+1682281859540:### Create and plot the data for ROC Curve
+1682281859540:plot(roc) # ROC curve
+1682281859545:abline(0,1)
+1682281859546:### Find the area under the curve (auc)
+1682281859547:auc = performance(pred1, measure = "auc")
+1682281859552:auc@y.values
+1682281859554:# Accuracy
+1682281859554:acc = performance(pred1, measure = "acc")
+1682281859559:plot(acc)
+1682281859569:### Find the cutoff using the highest accuracy
+1682281859570:which.max(unlist(acc@y.values)) # the highest accuracy
+1682281859571:unlist(acc@y.values)[9] # 80%
+1682281859572:unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
+1682282216004:pairs(three_points_pct, two_points_pct, log(assists_turnover_ratio))
+1682282230829:pairs(three_points_pct, two_points_pct, assists_turnover_ratio)
+1682282257824:pairs(data.frame(three_points_pct, two_points_pct, assists_turnover_ratio))
+1682282310002:currPredictors <- data.frame(three_points_pct, two_points_pct, assists_turnover_ratio)
+1682282310005:pairs(currPredictors)
+1682282310020:correlation <- cor(currPredictors)
+1682282310023:corrplot(correlation)
+1682282318591:library(corrplot)
+1682282354937:install.packages('corrplot')
+1682282362375:library(corrplot)
+1682282362397:currPredictors <- data.frame(three_points_pct, two_points_pct, assists_turnover_ratio)
+1682282362400:pairs(currPredictors)
+1682282362415:correlation <- cor(currPredictors)
+1682282362418:corrplot(correlation)
+1682282437819:detach(subSet2)
+1682282444195:attach(dat)
+1682282453494:detach(subSet2)
+1682282458757:detach(dat)
+1682282460983:detach(dat)
+1682282463320:detach(dat)
+1682282465120:detach(dat)
+1682282466061:detach(dat)
+1682282467147:detach(dat)
+1682282468095:detach(dat)
+1682282502012:detach(gamesSubSet)
+1682282504132:detach(gamesSubSet)
+1682286470261:# getting data with home/away stat
+1682286470262:dat <- read.csv("tidy200_conf.csv")
+1682286471888:attach(dat)
+1682287281338:# getting data with home/away stat
+1682287281338:dat <- read.csv("tidy200_conf.csv")
+1682287281369:attach(dat)
+1682287281373:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682287281377:detach(dat)
+1682287281378:attach(subSet3)
+1682287281383:subSet3 <- subSet3 %>%
+1682287281384:mutate(home_away = if_else(home_away == "home", 1, 0))
+1682287281389:subSet3 <- subSet3 %>%
+1682287281390:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682287422964:# getting data with home/away stat
+1682287422964:dat <- read.csv("tidy200_conf.csv")
+1682287422995:attach(dat)
+1682287423000:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682287423004:detach(dat)
+1682287423005:attach(subSet3)
+1682287423010:subSet3 <- subSet3 %>%
+1682287423011:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682287423012:mutate(attendance = toNumeric(attendance)) %>%
+1682287423014:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682287431106:detach(dat)
+1682287435027:detach(dat)
+1682287437733:# getting data with home/away stat
+1682287437734:dat <- read.csv("tidy200_conf.csv")
+1682287437765:attach(dat)
+1682287437769:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682287437773:detach(dat)
+1682287437774:attach(subSet3)
+1682287437779:subSet3 <- subSet3 %>%
+1682287437780:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682287437781:mutate(attendance = toNumeric(attendance)) %>%
+1682287437781:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682287468830:# getting data with home/away stat
+1682287468831:dat <- read.csv("tidy200_conf.csv")
+1682287468861:attach(dat)
+1682287468866:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682287468882:detach(dat)
+1682287468883:attach(subSet3)
+1682287468888:subSet3 <- subSet3 %>%
+1682287468888:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682287468889:mutate(attendance = strtoi(attendance)) %>%
+1682287468890:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682287508686:View(subSet3)
+1682287736563:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682287785820:# getting data with home/away stat
+1682287785821:dat <- read.csv("tidy200_conf.csv")
+1682287785851:attach(dat)
+1682287785857:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682287785861:detach(dat)
+1682287785862:attach(subSet3)
+1682287785867:subSet3 <- subSet3 %>%
+1682287785868:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682287785869:mutate(attendance = strtoi(attendance)) %>%
+1682287785870:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682287785871:mutate(result = if_else(result == "win", 1, 0))
+1682287796322:View(subSet3)
+1682287796577:View(subSet3)
+1682288004326:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682288008288:# getting data with home/away stat
+1682288008288:dat <- read.csv("tidy200_conf.csv")
+1682288008319:attach(dat)
+1682288008324:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288008328:detach(dat)
+1682288008329:attach(subSet3)
+1682288008339:subSet3 <- subSet3 %>%
+1682288008349:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288008350:mutate(attendance = strtoi(attendance)) %>%
+1682288008352:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288008353:mutate(result = if_else(result == "win", 1, 0))
+1682288013114:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682288023797:detach(subSet2)
+1682288029844:detach(dat)
+1682288036743:# getting data with home/away stat
+1682288036744:dat <- read.csv("tidy200_conf.csv")
+1682288036774:attach(dat)
+1682288036779:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288036783:detach(dat)
+1682288036784:attach(subSet3)
+1682288036791:subSet3 <- subSet3 %>%
+1682288036792:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288036793:mutate(attendance = strtoi(attendance)) %>%
+1682288036793:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288036794:mutate(result = if_else(result == "win", 1, 0))
+1682288100146:detach(subSet2)
+1682288131877:detach(dat)
+1682288138423:detach(subSet2)
+1682288143430:detach(subSet3)
+1682288155997:# getting data with home/away stat
+1682288155998:dat <- read.csv("tidy200_conf.csv")
+1682288156034:attach(dat)
+1682288156041:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288156045:detach(dat)
+1682288156046:attach(subSet3)
+1682288156053:subSet3 <- subSet3 %>%
+1682288156054:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288156054:mutate(attendance = strtoi(attendance)) %>%
+1682288156055:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288156056:mutate(result = if_else(result == "win", 1, 0))
+1682288405786:# getting data with home/away stat
+1682288405786:dat <- read.csv("tidy200_conf.csv")
+1682288405818:attach(dat)
+1682288405823:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288405827:detach(dat)
+1682288405828:attach(subSet3)
+1682288405835:subSet3 <- subSet3 %>%
+1682288405836:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288405836:subSet3 <- subSet3 %>%
+1682288405837:mutate(attendance = strtoi(attendance)) %>%
+1682288405837:subSet3 <- subSet3 %>%
+1682288405838:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288405838:subSet3 <- subSet3 %>%
+1682288405839:mutate(result = if_else(result == "win", 1, 0))
+1682288414781:detach(subSet3)
+1682288416176:detach(subSet3)
+1682288417021:detach(subSet3)\
+1682288418435:detach(subSet3)\
+1682288420137:detach(subSet3)
+1682288421106:detach(subSet3)
+1682288421980:detach(subSet3)
+1682288422752:detach(subSet3)
+1682288423583:detach(subSet3)
+1682288425009:detach(subSet3)
+1682288425860:detach(subSet3)
+1682288427315:detach(subSet3)
+1682288438961:# getting data with home/away stat
+1682288438961:dat <- read.csv("tidy200_conf.csv")
+1682288438991:attach(dat)
+1682288438995:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288438999:detach(dat)
+1682288439000:attach(subSet3)
+1682288439004:subSet3 <- subSet3 %>%
+1682288439005:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288439005:subSet3 <- subSet3 %>%
+1682288439006:mutate(attendance = strtoi(attendance)) %>%
+1682288439007:subSet3 <- subSet3 %>%
+1682288439007:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288439008:subSet3 <- subSet3 %>%
+1682288439009:mutate(result = if_else(result == "win", 1, 0))
+1682288554434:str(subSet3)
+1682288583412:subSet3 <- data.frame(result, strtoi(attendance), home_away, fast_break_att, blocks)
+1682288592910:str(subSet3)
+1682288601387:# getting data with home/away stat
+1682288601387:dat <- read.csv("tidy200_conf.csv")
+1682288601418:attach(dat)
+1682288601422:subSet3 <- data.frame(result, strtoi(attendance), home_away, fast_break_att, blocks)
+1682288601426:detach(dat)
+1682288601427:attach(subSet3)
+1682288601432:subSet3 <- subSet3 %>%
+1682288601433:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288601433:subSet3 <- subSet3 %>%
+1682288601434:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288601435:subSet3 <- subSet3 %>%
+1682288601435:mutate(result = if_else(result == "win", 1, 0))
+1682288606884:detach(subSet3)
+1682288608585:detach(subSet3)
+1682288609842:detach(subSet3)
+1682288613337:# getting data with home/away stat
+1682288613338:dat <- read.csv("tidy200_conf.csv")
+1682288613368:attach(dat)
+1682288613372:subSet3 <- data.frame(result, strtoi(attendance), home_away, fast_break_att, blocks)
+1682288613376:detach(dat)
+1682288613376:attach(subSet3)
+1682288613382:subSet3 <- subSet3 %>%
+1682288613383:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288613383:subSet3 <- subSet3 %>%
+1682288613384:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288613385:subSet3 <- subSet3 %>%
+1682288613385:mutate(result = if_else(result == "win", 1, 0))
+1682288706631:# getting data with home/away stat
+1682288706632:dat <- read.csv("tidy200_conf.csv")
+1682288706662:attach(dat)
+1682288706666:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288706669:detach(dat)
+1682288706670:attach(subSet3)
+1682288706675:subSet3 <- subSet3 %>%
+1682288706676:mutate(attendance = strtoi(attendance))
+1682288706680:subSet3 <- subSet3 %>%
+1682288706681:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288706682:subSet3 <- subSet3 %>%
+1682288706682:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1)) %>%
+1682288706683:subSet3 <- subSet3 %>%
+1682288706683:mutate(result = if_else(result == "win", 1, 0))
+1682288742863:# getting data with home/away stat
+1682288742864:dat <- read.csv("tidy200_conf.csv")
+1682288742894:attach(dat)
+1682288742898:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288742902:detach(dat)
+1682288742903:attach(subSet3)
+1682288742907:subSet3 <- subSet3 %>%
+1682288742908:mutate(attendance = strtoi(attendance))
+1682288742913:subSet3 <- subSet3 %>%
+1682288742914:mutate(home_away = if_else(home_away == "home", 1, 0)) %>%
+1682288742914:subSet3 <- subSet3 %>%
+1682288742915:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682288757863:# getting data with home/away stat
+1682288757865:dat <- read.csv("tidy200_conf.csv")
+1682288757896:attach(dat)
+1682288757901:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288757905:detach(dat)
+1682288757905:attach(subSet3)
+1682288757911:subSet3 <- subSet3 %>%
+1682288757912:mutate(attendance = strtoi(attendance))
+1682288757916:subSet3 <- subSet3 %>%
+1682288757917:mutate(home_away = if_else(home_away == "home", 1, 0))
+1682288757921:subSet3 <- subSet3 %>%
+1682288757922:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682288757926:subSet3 <- subSet3 %>%
+1682288757927:mutate(result = if_else(result == "win", 1, 0))
+1682288757932:detach(subSet3)
+1682288764642:detach(subSet3)
+1682288765618:detach(subSet3)
+1682288766447:detach(subSet3)
+1682288767250:detach(subSet3)
+1682288770100:# getting data with home/away stat
+1682288770100:dat <- read.csv("tidy200_conf.csv")
+1682288770132:attach(dat)
+1682288770136:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288770139:detach(dat)
+1682288770143:attach(subSet3)
+1682288770148:subSet3 <- subSet3 %>%
+1682288770149:mutate(attendance = strtoi(attendance))
+1682288770153:subSet3 <- subSet3 %>%
+1682288770154:mutate(home_away = if_else(home_away == "home", 1, 0))
+1682288770158:subSet3 <- subSet3 %>%
+1682288770159:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682288770163:subSet3 <- subSet3 %>%
+1682288770164:mutate(result = if_else(result == "win", 1, 0))
+1682288770168:detach(subSet3)
+1682288777836:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682288795873:attach(subSet3)
+1682288795876:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682288795878:summary(multiGLM2)
+1682288795885:detach(subSet3)
+1682288822251:# getting data with home/away stat
+1682288822252:dat <- read.csv("tidy200_conf.csv")
+1682288822283:attach(dat)
+1682288822287:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288822290:detach(dat)
+1682288822291:attach(subSet3)
+1682288822295:subSet3 <- subSet3 %>%
+1682288822296:mutate(attendance = strtoi(attendance) * .0001)
+1682288822301:subSet3 <- subSet3 %>%
+1682288822302:mutate(home_away = if_else(home_away == "home", 1, 0))
+1682288822306:subSet3 <- subSet3 %>%
+1682288822307:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682288822311:subSet3 <- subSet3 %>%
+1682288822312:mutate(result = if_else(result == "win", 1, 0))
+1682288822317:detach(subSet3)
+1682288825339:attach(subSet3)
+1682288825343:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682288825345:summary(multiGLM2)
+1682288825352:detach(subSet3)
+1682288870337:# getting data with home/away stat
+1682288870338:dat <- read.csv("tidy200_conf.csv")
+1682288870369:attach(dat)
+1682288870374:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682288870377:detach(dat)
+1682288870378:attach(subSet3)
+1682288870382:subSet3 <- subSet3 %>%
+1682288870383:mutate(attendance = strtoi(attendance) * .00001)
+1682288870388:subSet3 <- subSet3 %>%
+1682288870389:mutate(home_away = if_else(home_away == "home", 1, 0))
+1682288870393:subSet3 <- subSet3 %>%
+1682288870394:mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
+1682288870398:subSet3 <- subSet3 %>%
+1682288870399:mutate(result = if_else(result == "win", 1, 0))
+1682288870403:detach(subSet3)
+1682288873740:attach(subSet3)
+1682288873744:multiGLM2 <- glm(result ~ attendance + fast_break_att + blocks)
+1682288873755:summary(multiGLM2)
+1682288873762:detach(subSet3)
+1682288895200:qqnorm(attendance)
+1682288921647:qqnorm(attendance)
+1682289046409:attach(subSet3)
+1682289051319:qqnorm(attendance)
+1682289051325:qqline(attendance)
+1682289063536:View(subSet3)
+1682289063786:View(subSet3)
+1682289200757:histogram(attendance)
+1682289208511:hist(attendance)
+1682289220397:qqnorm(abs(attendance))
+1682289235650:qqnorm(abs(attendance))
+1682289235656:qqline(abs(attendance))
+1682289274645:# getting data with home/away stat
+1682289274646:dat <- read.csv("tidy200_conf.csv")
+1682289274675:attach(dat)
+1682289274679:subSet3 <- data.frame(result, attendance, home_away, fast_break_att, blocks)
+1682289274683:detach(dat)
+1682289274684:attach(subSet3)
+1682289274688:subSet3 <- subSet3 %>%
+1682289274689:mutate(attendance = strtoi(attendance))
+1682289274694:subSet3 <- subSet3 %>%
+1682289274695:mutate(home_away = if_else(home_away == "home", 1, 0))
+1682289274699:subSet3 <- subSet3 %>%
+1682289274700:mutate(attendance = if_else(home_away == 1, attendance, (attendance * 2) / attendance))
+1682289274704:subSet3 <- subSet3 %>%
+1682289274705:mutate(result = if_else(result == "win", 1, 0))
+1682289274709:detach(subSet3)
+1682289472500:remotes::install_github("jmcphers/rsrecovr")
+1682289725832:install.packages("remotes")
+1682289755890:remotes::install_github("jmcphers/rsrecovr")
+1682289773156:rsrecovr::recovr()
+1682289791438:rsrecovr::recovr()
+1682289818607:setwd("~/Documents/School/Winter 2023/Computational Statistics/Project/R Files")
+1682289822452:rsrecovr::recovr()
