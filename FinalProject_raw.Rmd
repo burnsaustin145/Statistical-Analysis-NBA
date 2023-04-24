@@ -161,3 +161,57 @@ multiGLM2 <- glm(result ~ attendance + fast_break_made + blocks)
 summary(multiGLM2)
 detach(subSet3)
 ```
+
+<!-- Attempting to convert attendance into crowd factor ie how full is the stadium -->
+```{r}
+dat <- read.csv("tidy200_conf_true.csv")
+attach(dat)
+dat <- dat %>%
+  mutate(capacity = strtoi(capacity))
+
+cfGen <- function(cf) {
+  y <- log((cf)/(1-cf))
+  return(y)
+}
+
+crowdFactor <- as.numeric(attendance) / capacity
+subSet3 <- data.frame(result, crowdFactor, home_away, fast_break_made, blocks)
+# normalize crowd factor for > 1
+subSet3 <- subSet3 %>%
+  mutate(crowdFactor = if_else(crowdFactor > 1 | crowdFactor == 1, .999999, crowdFactor))
+subSet3 <- subSet3 %>%
+  mutate(crowdFactor = if_else(crowdFactor == 0, .00000001, crowdFactor))
+detach(dat)
+attach(subSet3)
+rm(crowdFactor)
+subSet3 <- na.omit(subSet3)
+subSet3 <- subSet3 %>%
+  mutate(home_away = if_else(home_away == "home", 1, 0))
+subSet3 <- subSet3 %>%
+  mutate(crowdFactor = if_else(home_away == 1, cfGen(crowdFactor), -cfGen(crowdFactor)))
+subSet3 <- subSet3 %>%
+  mutate(result = if_else(result == "win", 1, 0))
+detach(subSet3)
+```
+
+```{r}
+attach(subSet3)
+multiGLM2 <- glm(result ~ crowdFactor)
+summary(multiGLM2)
+detach(subSet3)
+```
+<!-- p-val of .09 attained for crowd factor, kinda promising . away gets /10 on crowd factor -->
+<!-- p-val of .13 for crowd factor, with exp(-cf) -->
+<!-- p-val of .067 acheived with cfg(+/-logit(cf)) -->
+```{r}
+qqnorm(crowdFactor)
+qqline(crowdFactor)
+hist(crowdFactor)
+```
+
+```{r}
+detach(dat)
+detach(subSet3)
+
+```
+
