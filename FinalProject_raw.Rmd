@@ -27,15 +27,15 @@ qqline(dat$field_goals_pct)
 ```
 
 ```{r}
-gamesSubSet <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+subSet1 <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
 detach(dat)
-attach(gamesSubSet)
-gamesSubSet <- gamesSubSet %>%
+attach(subSet1)
+subSet1 <- subSet1 %>%
   mutate(attendance = as.numeric(attendance))
-gamesSubSet <- gamesSubSet %>%
+subSet1 <- subSet1 %>%
   mutate(result = if_else(result == "win", 1, 0))
 
-pairs(gamesSubSet)
+pairs(subSet1)
 qqnorm(two_points_pct)
 qqline(two_points_pct)
 
@@ -56,6 +56,7 @@ plot(twoPtPcModel)
 naiveFit <- lm(points ~ three_points_pct + two_points_pct + free_throws_pct)
 summary(naiveFit)
 plot(naiveFit)
+detach(subSet1)
 ```
 
 
@@ -81,8 +82,7 @@ lines(efficiency_game_score[index],fitted(GLM1)[index],lwd=2)
 lines(lowess(efficiency_game_score, result),col="red",lwd=2)
 legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
 
-# make a multiplie logistic regression model
-
+# make a multiple logistic regression model
 multiGLM1 <- glm(result ~ offensive_rating + , family=binomial("logit"))
 summary(multiGLM1)
 detach(subSet2)
@@ -137,7 +137,9 @@ unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
 ```
 
 
-
+<!--
+  Trying a ratio in our second multiple regression model
+-->
 ```{r}
 attach(dat)
 qqnorm(assists_turnover_ratio)
@@ -155,6 +157,9 @@ detach(dat)
 ```
 *Transforming assist/turnover ratio logarithmically did not improve the p-value significantly.*
 
+<-- 
+  !!To Remove!!
+-->
 ```{r}
 # detaching from part 1 activities
 detach(subSet2)
@@ -163,7 +168,10 @@ detach(gamesSubSet)
 ```
 
 
-
+<!--
+  Second multiple regression model using home/away attendance modifier. 
+  (The initial attempt at crowdFactor stat)
+-->
 ```{r}
 # getting data with home/away stat
 dat <- read.csv("tidy200_conf.csv")
@@ -176,7 +184,7 @@ subSet3 <- subSet3 %>%
 subSet3 <- subSet3 %>%
   mutate(home_away = if_else(home_away == "home", 1, 0))
 subSet3 <- subSet3 %>%
-  mutate(attendance = if_else(home_away == 1, attendance, (attendance * 2) / attendance))
+  mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
 subSet3 <- subSet3 %>%
   mutate(result = if_else(result == "win", 1, 0))
 detach(subSet3)
@@ -185,53 +193,32 @@ detach(subSet3)
 
 ```{r}
 attach(subSet3)
-multiGLM2 <- glm(result ~ attendance + fast_break_made + blocks)
-summary(multiGLM2)
+multiGLM3 <- glm(result ~ attendance + fast_break_made + blocks)
+summary(multiGLM3)
 detach(subSet3)
 ```
 
-<!-- Attempting to convert attendance into crowd factor ie how full is the stadium -->
+<!-- 
+  Attempting to convert attendance into crowd factor:
+  what percentage full is the stadium? 
+-->
 ```{r}
-# read data with capacity and attendance
-dat <- read.csv("tidy200_conf_true.csv")
-attach(dat)
-dat <- dat %>%
-  mutate(capacity = strtoi(capacity))
-
-crowdFactor <- as.numeric(attendance) / capacity
-subSet3 <- data.frame(result, crowdFactor, home_away, fast_break_made, blocks)
-rm(crowdFactor)
-# keep crowd factor on open interval (0, 1)
-subSet3 <- subSet3 %>%
-  mutate(crowdFactor = if_else(crowdFactor > 1 | crowdFactor == 1, .999999, crowdFactor))
-subSet3 <- subSet3 %>%
-  mutate(crowdFactor = if_else(crowdFactor == 0, .00000001, crowdFactor))
-
-detach(dat)
-attach(subSet3)
-# cleaning up subSet3 and adding croud factor transformation (improved p-val)
-subSet3 <- na.omit(subSet3)
-subSet3 <- subSet3 %>%
-  mutate(home_away = if_else(home_away == "home", 1, 0))
-subSet3 <- subSet3 %>%
-  mutate(crowdFactor = if_else(home_away == 1, cfGen2(crowdFactor, "home"), cfGen2(crowdFactor, "away")))
-subSet3 <- subSet3 %>%
-  mutate(result = if_else(result == "win", 1, 0))
-detach(subSet3)
-```
-
-```{r}
-# testing crowdFactor
+# using a larger number of observations
+subSet3 <- readCSV500() # applies the crowdFactor transformation
 attach(subSet3)
 multiGLM2 <- glm(result ~ crowdFactor)
 summary(multiGLM2)
 hist(crowdFactor, breaks=100)
 detach(subSet3)
 ```
-
-*We see a somewhat significant p-value for our crowdFactor predictor.*
+<!-- p-val of .09 attained for crowd factor, kinda promising . away gets /10 on crowd factor -->
+<!-- p-val of .13 for crowd factor, with exp(-cf) -->
+<!-- p-val of .067 acheived with cfg(+/-logit(cf)) -->
+<!-- p-val of 0.082 for special logit:[0, 1]-> [0, 1] -->
+*We see a somewhat significant p-value for our crowdFactor predictor at n = 132. But at n=356 we see a very significant value with *$p\approx0.004$.
 
 ```{r}
+# doing some further testing on our crowdFactor statistic
 attach(subSet3)
 hoslem.test(result, fitted(multiGLM2))
 
@@ -253,17 +240,15 @@ plot(acc)
 ### Find the cutoff using the highest accuracy
 which.max(unlist(acc@y.values)) # the highest accuracy
 unlist(acc@y.values)[9] # 80%
-unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
+unlist(acc@x.values)[9]
 detach(subSet3)
 ```
+*We see an p-value of *$p=0.000325$ *in our goodness of fit test, indicating we can reject the null hypothesis that the model is fit to the data.*
+*Our graph looks much better now (n=132->356), with the area under the T/F curve increasing. Also we see a much larger p-value at *$p=0.8361$ *indicating we fail to reject the null hypothesis, which suggests the model is a good fit.* <!-- should I really use 'suggests' here?? -->
 
-<!-- p-val of .09 attained for crowd factor, kinda promising . away gets /10 on crowd factor -->
-<!-- p-val of .13 for crowd factor, with exp(-cf) -->
-<!-- p-val of .067 acheived with cfg(+/-logit(cf)) -->
-<!-- p-val of 0.082 for special logit:[0, 1]-> [0, 1] -->
 
 ```{r}
-# detaching stuff
+# detaching stuff (!to remove!)
 detach(dat)
 detach(subSet3)
 ```
@@ -287,6 +272,41 @@ cfGen2 <- function(cf, crowd) {
   
   return(y)
 }
+# function to read tidy500_conf_true.csv 
+readCSV500 <- function() {
+  dat <- read.csv("tidy500_conf_true.csv")
+  attach(dat)
+  dat <- dat %>%
+    filter(attendance != "no_info")
+  dat <- dat %>%
+    mutate(capacity = strtoi(capacity))
+  
+  crowdFactor <- as.numeric(attendance) / capacity
+  subSet3 <- data.frame(result, crowdFactor, home_away, fast_break_made, blocks)
+  rm(crowdFactor)
+  # keep crowd factor on open interval (0, 1)
+  subSet3 <- subSet3 %>%
+    mutate(crowdFactor = if_else(crowdFactor > 1 | crowdFactor == 1, .999999, crowdFactor))
+  subSet3 <- subSet3 %>%
+    mutate(crowdFactor = if_else(crowdFactor == 0, .00000001, crowdFactor))
+
+  detach(dat)
+  attach(subSet3)
+  # cleaning up subSet3 and adding croud factor transformation (improved p-val)
+  subSet3 <- na.omit(subSet3)
+  subSet3 <- subSet3 %>%
+    mutate(home_away = if_else(home_away == "home", 1, 0))
+  # apply transformation to crowdFactor
+  subSet3 <- subSet3 %>%
+    mutate(crowdFactor = if_else(home_away == 1, cfGen2(crowdFactor, "home"), cfGen2(crowdFactor, "away")))
+  subSet3 <- subSet3 %>%
+    mutate(result = if_else(result == "win", 1, 0))
+  detach(subSet3)
+  
+  return(subSet3)
+}
+
+
 
 ```
 
