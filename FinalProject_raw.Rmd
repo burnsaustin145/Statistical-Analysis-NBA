@@ -13,6 +13,7 @@ library(ResourceSelection)
 library(LaplacesDemon)
 library(corrplot)
 library(ggplot2)
+library(GGally)
 ```
 <!-- Functions for project use -->
 ```{r}
@@ -160,30 +161,27 @@ subSet1 <- subSet1 %>%
 subSet1 <- subSet1 %>%
   mutate(result = if_else(result == "win", 1, 0))
 
-pairs(subSet1)
-qqnorm(two_points_pct)
-qqline(two_points_pct)
-
+# three point percentage model
 threePtPcModel <- lm(points ~ three_points_pct)
 summary(threePtPcModel)
 
-plot(three_points_pct, points)
-abline(threePtPcModel)
-plot(threePtPcModel)
+ggplot(subSet1, aes(x = three_points_pct, y = points)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
 
+# two point percentage model
 twoPtPcModel <- lm(points ~ two_points_pct)
 summary(twoPtPcModel)
 
-plot(two_points_pct, points)
-abline(twoPtPcModel)
-plot(twoPtPcModel)
+ggplot(subSet1, aes(x = two_points_pct, y = points)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
 
 naiveFit <- lm(points ~ three_points_pct + two_points_pct + free_throws_pct)
 summary(naiveFit)
-plot(naiveFit)
+
 detach(subSet1)
 ```
-
 
 
 <!--
@@ -193,18 +191,18 @@ detach(subSet1)
 ```{r}
 attach(games)
 # can't really use offensive & defensive together
-subSet2 <- data.frame(result, offensive_rating, defensive_rating, efficiency_game_score)
+subSet2 <- data.frame(result, offensive_rating, defensive_rating, 
+                      efficiency_game_score)
 subSet2 <- subSet2 %>%
   mutate(result = if_else(result == "win", 1, 0))
-pairs(subSet2)
 
 detach(games)
 attach(subSet2)
 pairs(subSet2)
+# Efficiency game score logistic regression model
 GLM1 <- glm(result ~ efficiency_game_score, family=binomial("logit"))
 summary(GLM1)
 
-plot(GLM1)
 index=order(efficiency_game_score)
 
 plot(efficiency_game_score, result, xlab = "Efficiency", ylab = "Success")
@@ -213,11 +211,15 @@ lines(lowess(efficiency_game_score, result),col="red",lwd=2)
 legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
 
 # make a multiple logistic regression model
-multiGLM1 <- glm(result ~ offensive_rating + efficiency_game_score, family=binomial("logit"))
+multiGLM1 <- glm(result ~ offensive_rating + efficiency_game_score, 
+                 family=binomial("logit"))
 summary(multiGLM1)
 detach(subSet2)
 ```
 <!-- Efficiency Game Score: (Points) + (0.4*Field Goals Made) - (0.7*Field Goals Attempted) - (0.4*Free Throws Missed) + (0.7*Offensive Rebounds) + (0.3*Defensive Rebounds) + (Steals) + (0.7*Assists) + (0.7*Blocks) – (0.4*Personal Fouls) – (Turnovers) -->
+*The definition for efficiency game score is given by data source as:*
+$$(\text{points})+(0.4\cdot\text{fieldGoals})-(0.7\cdot\text{fieldGoalsAtt}) - (0.4\text{fieldGoalsMiss})+(0.7\cdot\text{offensiveRbd})+(0.3\cdot\text{defensiveRbd})+(\text{steals})+(0.7\cdot\text{assists})+(0.7\cdot\text{blocks})-(0.4\cdot\text{personalFouls})-(\text{turnovers})$$
+
 
 <!--
   Testing altered multiGLM1 with defensive rating
@@ -230,16 +232,14 @@ subSet2 <- subSet2 %>%
   mutate(result = if_else(result == "win", 1, 0))
 subSet2 <- subSet2 %>%
   mutate(result = strtoi(result))
-pairs(subSet2)
 
 detach(games)
 attach(subSet2)
-class(result)
+# checking correlations between predictor variables
 predictorCor <- cor(subSet2)
 corrplot(predictorCor)
 
 # make a multiple logistic regression model
-
 multiGLM1.1 <- glm(result ~ efficiency_game_score + defensive_rating, family=binomial("logit"))
 summary(multiGLM1.1)
 detach(subSet2)
@@ -331,25 +331,22 @@ detach(subSet5)
 attach(subSet5)
 hoslem.test(result, fitted(multiGLM2))
 
-### Get the predicted values of the model
 pred = predict(multiGLM2,type="response")
-#### Get predictions with true positive rate (tpr) and false positive rate (fpr).
 pred1 = prediction(pred, labels = result)
 roc = performance(pred1,"tpr", "fpr")
 roc
-### Create and plot the data for ROC Curve
+# plot ROC curve
 plot(roc) # ROC curve
 abline(0,1)
-### Find the area under the curve (auc)
+# get area
 auc = performance(pred1, measure = "auc")
 auc@y.values
 # Accuracy
 acc = performance(pred1, measure = "acc")
-plot(acc)
 ### Find the cutoff using the highest accuracy
 which.max(unlist(acc@y.values)) # the highest accuracy
 unlist(acc@y.values)[9] # 80%
-unlist(acc@x.values)[9]
+unlist(acc@x.values)[9] # interpret cuttoff!!
 detach(subSet5)
 ```
 *We see an p-value of *$p=0.000325$ *in our goodness of fit test, indicating we can reject the null hypothesis that the model is fit to the data.*
@@ -365,7 +362,6 @@ attach(subSet5)
 multiGLM4 <- glm(result ~ crowdFactor + blocks + fast_break_made)
 summary(multiGLM4)
 hist(crowdFactor, breaks=100)
-hist(log(blocks))
 detach(subSet5)
 ```
 *Not a bad start to adding variables to our sought after team confidence statistic. We have a somewhat significant p-value at *$p\approx0.056$.
@@ -376,9 +372,21 @@ subSet5.1 <- subSet5 %>%
   
 detach(games)
 attach(subSet5.1)
-multiGLM4 <- glm(result ~ crowdFactor + blocks + steals)
-summary(multiGLM4)
+multiGLM5 <- glm(result ~ crowdFactor + blocks + steals)
+summary(multiGLM5)
+AIC(multiGLM4)
+AIC(multiGLM5)
+
+hoslem.test(result, fitted(multiGLM5))
+
+pred = predict(multiGLM5,type="response")
+pred1 = prediction(pred, labels = result)
+roc = performance(pred1,"tpr", "fpr")
+roc
+# plot ROC curve
+plot(roc) # ROC curve
+abline(0,1)
 ```
-*Adding blocks and steals to the team confidence model gives significant p-values for each predictor.*
+*Adding blocks and steals to the team confidence model gives significant p-values for each predictor. We get a better AIC score for our confidence model with blocks and steals, as opposed to our confidence model with blocks and fast breaks made.*
 
 
