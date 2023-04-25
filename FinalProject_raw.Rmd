@@ -14,21 +14,66 @@ library(LaplacesDemon)
 library(corrplot)
 ```
 
-
+<!--
+  Initial look at data.
+-->
 ```{r}
-dat <- data.frame(read.csv("tidy200.csv"))
-attach(dat)
-hist(dat$field_goals_pct, breaks = 100)
-hist(dat$effective_fg_pct, breaks = 100)
-qqnorm(dat$effective_fg_pct, main="Effective")
-qqline(dat$effective_fg_pct)
-qqnorm(dat$field_goals_pct, main="FGP")
-qqline(dat$field_goals_pct)
+readCSV500()
+readCSVConf()
 ```
 
+<!--
+  comparing factors (t-test section)
+  Starting with comparing home & away, 
+  points and other possible win indicators.
+-->
 ```{r}
+# make a paired t-test comparison between...
+# home and away points
+home <- games %>%
+  filter(home_away == "home") %>%
+  pull(points)
+away <- games %>%
+  filter(home_away == "away") %>%
+  pull(points)
+
+t.test(home, away, paired = TRUE)
+
+rm(home)
+rm(away)
+```
+*We see an insignificant p-value of *$0.15$*, and we fail to reject the null hypothesis that the difference in means is zero. We don't have enough evidence to say that teams have different mean score between home and away games. This will be of interest to us later on.*
+
+```{r}
+# make a paired t-test comparison between...
+# home and away points
+home <- games %>%
+  filter(home_away == "home") %>%
+  pull(efficiency_game_score)
+away <- games %>%
+  filter(home_away == "away") %>%
+  pull(efficiency_game_score)
+
+t.test(home, away, paired = TRUE)
+
+rm(home)
+rm(away)
+```
+*We see *$p=0.162$ *, we cannot reject the hypothesis that the difference between mean efficiency_game_score is 0 between home and away teams.*
+
+```{r}
+
+```
+
+
+<!--
+  Testing with points scored as response.
+  Various models.
+-->
+```{r}
+attach(games)
 subSet1 <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
-detach(dat)
+detach(games)
 attach(subSet1)
 subSet1 <- subSet1 %>%
   mutate(attendance = as.numeric(attendance))
@@ -60,15 +105,20 @@ detach(subSet1)
 ```
 
 
+
+<!--
+  Testing efficiency game score.
+  Also testing the first glm.
+-->
 ```{r}
-attach(dat)
+attach(games)
 # can't really use offensive & defensive together
-subSet2 <- data.frame(result, offensive_rating, defensive_rating)
+subSet2 <- data.frame(result, offensive_rating, defensive_rating, efficiency_game_score)
 subSet2 <- subSet2 %>%
   mutate(result = if_else(result == "win", 1, 0))
 pairs(subSet2)
 
-detach(dat)
+detach(games)
 attach(subSet2)
 pairs(subSet2)
 GLM1 <- glm(result ~ efficiency_game_score, family=binomial("logit"))
@@ -83,37 +133,43 @@ lines(lowess(efficiency_game_score, result),col="red",lwd=2)
 legend("bottomright", c("fitted", "lowess"), lty =1, col = 1:2)
 
 # make a multiple logistic regression model
-multiGLM1 <- glm(result ~ offensive_rating + , family=binomial("logit"))
+multiGLM1 <- glm(result ~ offensive_rating + efficiency_game_score, family=binomial("logit"))
 summary(multiGLM1)
 detach(subSet2)
 ```
 <!-- Efficiency Game Score: (Points) + (0.4*Field Goals Made) - (0.7*Field Goals Attempted) - (0.4*Free Throws Missed) + (0.7*Offensive Rebounds) + (0.3*Defensive Rebounds) + (Steals) + (0.7*Assists) + (0.7*Blocks) – (0.4*Personal Fouls) – (Turnovers) -->
 
+<!--
+  Testing altered multiGLM1 with defensive rating
+-->
 ```{r}
-attach(dat)
+attach(games)
 # select efficiency_game_score and defensive rating
 subSet2 <- data.frame(result, efficiency_game_score, defensive_rating)
 subSet2 <- subSet2 %>%
   mutate(result = if_else(result == "win", 1, 0))
+subSet2 <- subSet2 %>%
+  mutate(result = strtoi(result))
 pairs(subSet2)
 
-detach(dat)
+detach(games)
 attach(subSet2)
-
+class(result)
 predictorCor <- cor(subSet2)
 corrplot(predictorCor)
 
 # make a multiplie logistic regression model
 
-multiGLM1 <- glm(result ~ efficiency_game_score + defensive_rating, family=binomial("logit"))
-summary(multiGLM1)
+multiGLM1.1 <- glm(result ~ efficiency_game_score + defensive_rating, family=binomial("logit"))
+summary(multiGLM1.1)
 detach(subSet2)
 ```
 *We see, perhaps unsurprisingly, that both efficiency_game_score and defensive_rating are significant predictors in a team's result.*
 
 ```{r}
+attach(games)
 # doing some testing on our first multiGLM model
-hoslem.test(result, fitted(multiGLM1))
+hoslem.test(result, fitted(multiGLM1)) # !! fix hoslem test
 
 ### Get the predicted values of the model
 pred = predict(multiGLM1,type="response")
@@ -134,6 +190,7 @@ plot(acc)
 which.max(unlist(acc@y.values)) # the highest accuracy
 unlist(acc@y.values)[9] # 80%
 unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
+detach(games)
 ```
 
 
@@ -141,30 +198,42 @@ unlist(acc@x.values)[9] # 0.5424035 the cut-off prob
   Trying a ratio in our second multiple regression model
 -->
 ```{r}
-attach(dat)
+attach(games)
 qqnorm(assists_turnover_ratio)
 qqline(assists_turnover_ratio)
 # assist/turnover is not normal
 qqnorm(log(assists_turnover_ratio))
 qqline(log(assists_turnover_ratio))
 
+subSet3 <- data.frame(three_points_pct, two_points_pct, assists_turnover_ratio)
+subSet3 <- subSet3  %>%
+  mutate(result = if_else(result == "win", 1, 0))
+subSet3 <- subSet3 %>%
+  mutate(result = strtoi(result))
+pairs(subSet3)
+detach(games)
+attach(subSet3)
+
 multiGLM2 <- glm(result ~ three_points_pct + two_points_pct + assists_turnover_ratio, family=binomial("logit"))
 summary(multiGLM2)
 
 multiGLM2.1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
 summary(multiGLM2.1)
-detach(dat)
+detach(subSet3)
 ```
 *Transforming assist/turnover ratio logarithmically did not improve the p-value significantly.*
 
-<-- 
+<!-- 
   !!To Remove!!
 -->
 ```{r}
 # detaching from part 1 activities
+detach(subSet1)
 detach(subSet2)
+detach(subSet3)
 detach(dat)
-detach(gamesSubSet)
+detach(games200)
+detach(games)
 ```
 
 
@@ -174,28 +243,28 @@ detach(gamesSubSet)
 -->
 ```{r}
 # getting data with home/away stat
-dat <- read.csv("tidy200_conf.csv")
-attach(dat)
-subSet3 <- data.frame(result, attendance, home_away, fast_break_made, blocks)
-detach(dat)
-attach(subSet3)
-subSet3 <- subSet3 %>%
+games200 <- read.csv("tidy200_conf.csv")
+attach(games200)
+subSet4 <- data.frame(result, attendance, home_away, fast_break_made, blocks)
+detach(games200)
+attach(subSet4)
+subSet4 <- subSet4 %>%
   mutate(attendance = strtoi(attendance))
-subSet3 <- subSet3 %>%
+subSet4 <- subSet4 %>%
   mutate(home_away = if_else(home_away == "home", 1, 0))
-subSet3 <- subSet3 %>%
+subSet4 <- subSet4 %>%
   mutate(attendance = if_else(home_away == 1, attendance, attendance * -1))
-subSet3 <- subSet3 %>%
+subSet4 <- subSet4 %>%
   mutate(result = if_else(result == "win", 1, 0))
-detach(subSet3)
+detach(subSet4)
 ```
 
 
 ```{r}
-attach(subSet3)
+attach(subSet4)
 multiGLM3 <- glm(result ~ attendance + fast_break_made + blocks)
 summary(multiGLM3)
-detach(subSet3)
+detach(subSet4)
 ```
 
 <!-- 
@@ -204,12 +273,11 @@ detach(subSet3)
 -->
 ```{r}
 # using a larger number of observations
-subSet3 <- readCSV500() # applies the crowdFactor transformation
-attach(subSet3)
+attach(subSet5)
 multiGLM2 <- glm(result ~ crowdFactor)
 summary(multiGLM2)
 hist(crowdFactor, breaks=100)
-detach(subSet3)
+detach(subSet5)
 ```
 <!-- p-val of .09 attained for crowd factor, kinda promising . away gets /10 on crowd factor -->
 <!-- p-val of .13 for crowd factor, with exp(-cf) -->
@@ -219,7 +287,7 @@ detach(subSet3)
 
 ```{r}
 # doing some further testing on our crowdFactor statistic
-attach(subSet3)
+attach(subSet5)
 hoslem.test(result, fitted(multiGLM2))
 
 ### Get the predicted values of the model
@@ -241,16 +309,50 @@ plot(acc)
 which.max(unlist(acc@y.values)) # the highest accuracy
 unlist(acc@y.values)[9] # 80%
 unlist(acc@x.values)[9]
-detach(subSet3)
+detach(subSet5)
 ```
 *We see an p-value of *$p=0.000325$ *in our goodness of fit test, indicating we can reject the null hypothesis that the model is fit to the data.*
 *Our graph looks much better now (n=132->356), with the area under the T/F curve increasing. Also we see a much larger p-value at *$p=0.8361$ *indicating we fail to reject the null hypothesis, which suggests the model is a good fit.* <!-- should I really use 'suggests' here?? -->
 
 
+<!--
+Adding more predictors for team confidence statistic
+-->
+```{r}
+attach(subSet5)
+multiGLM2 <- glm(result ~ crowdFactor + blocks + fast_break_made)
+summary(multiGLM2)
+hist(crowdFactor, breaks=100)
+hist(log(blocks))
+detach(subSet5)
+```
+*Not a bad start to adding variables to our sought after team confidence statistic. We have a somewhat significant p-value at *$p\approx0.056$.
+```{r}
+attach(games)
+subSet5.1 <- subSet5 %>%
+  mutate(steals = steals)
+  
+detach(games)
+attach(subSet5.1)
+multiGLM4 <- glm(result ~ crowdFactor + blocks + steals)
+summary(multiGLM4)
+```
+```{r}
+attach(subSet5.1)
+
+multiGLM4 <- glm(result ~ crowdFactor + blocks + steals)
+summary(multiGLM4)
+detach(subSet5.1)
+```
+
+*Adding blocks and steals to the team confidence model gives significant p-values for each predictor.*
+
 ```{r}
 # detaching stuff (!to remove!)
 detach(dat)
 detach(subSet3)
+detach(subSet4)
+detach(subSet5)
 ```
 <!-- Functions for project use -->
 ```{r}
@@ -272,8 +374,18 @@ cfGen2 <- function(cf, crowd) {
   
   return(y)
 }
-# function to read tidy500_conf_true.csv 
+
 readCSV500 <- function() {
+  games <- read.csv("tidy500_conf_true.csv")
+  attach(dat)
+  games <- games %>%
+    filter(attendance != "no_info")
+  games <- games %>%
+    mutate(capacity = strtoi(capacity))
+  detach(games)
+}
+# function to read tidy500_conf_true.csv 
+readCSVConf <- function() {
   dat <- read.csv("tidy500_conf_true.csv")
   attach(dat)
   dat <- dat %>%
@@ -282,31 +394,28 @@ readCSV500 <- function() {
     mutate(capacity = strtoi(capacity))
   
   crowdFactor <- as.numeric(attendance) / capacity
-  subSet3 <- data.frame(result, crowdFactor, home_away, fast_break_made, blocks)
+  subSet5 <- data.frame(result, crowdFactor, home_away, fast_break_made, blocks)
   rm(crowdFactor)
   # keep crowd factor on open interval (0, 1)
-  subSet3 <- subSet3 %>%
+  subSet5 <- subSet5 %>%
     mutate(crowdFactor = if_else(crowdFactor > 1 | crowdFactor == 1, .999999, crowdFactor))
-  subSet3 <- subSet3 %>%
+  subSet5 <- subSet5 %>%
     mutate(crowdFactor = if_else(crowdFactor == 0, .00000001, crowdFactor))
 
   detach(dat)
-  attach(subSet3)
+  attach(subSet5)
   # cleaning up subSet3 and adding croud factor transformation (improved p-val)
-  subSet3 <- na.omit(subSet3)
-  subSet3 <- subSet3 %>%
+  subSet5 <- na.omit(subSet5)
+  subSet5 <- subSet5 %>%
     mutate(home_away = if_else(home_away == "home", 1, 0))
   # apply transformation to crowdFactor
-  subSet3 <- subSet3 %>%
+  subSet5 <- subSet5 %>%
     mutate(crowdFactor = if_else(home_away == 1, cfGen2(crowdFactor, "home"), cfGen2(crowdFactor, "away")))
-  subSet3 <- subSet3 %>%
+  subSet5 <- subSet5 %>%
     mutate(result = if_else(result == "win", 1, 0))
-  detach(subSet3)
-  
-  return(subSet3)
+  detach(subSet5)
+  return(subSet5)
 }
-
-
 
 ```
 
