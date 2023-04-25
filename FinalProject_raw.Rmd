@@ -6,6 +6,7 @@ output: pdf_document
 ---
 <!-- Importing Libraries -->
 ```{r message=FALSE, warning=FALSE}
+# required libraries
 library(dplyr)
 library(corrplot)
 library(ROCR)
@@ -16,6 +17,7 @@ library(ggplot2)
 library(GGally)
 ```
 <!-- Functions for project use -->
+# Project Functions
 ```{r}
 # function for crowd factor 
 cfGen1 <- function(cf) {
@@ -61,9 +63,9 @@ readCSVConf <- function() {
   # keep crowd factor on open interval (0, 1)
   subSet5 <- subSet5 %>%
     mutate(crowdFactor = if_else(crowdFactor > 1 | 
-                                   crowdFactor == 1, .999999, crowdFactor))
+                                   crowdFactor == 1, .99999, crowdFactor))
   subSet5 <- subSet5 %>%
-    mutate(crowdFactor = if_else(crowdFactor == 0, .00000001, crowdFactor))
+    mutate(crowdFactor = if_else(crowdFactor == 0, .00001, crowdFactor))
 
   detach(dat)
   attach(subSet5)
@@ -89,6 +91,19 @@ readCSVConf <- function() {
 ```{r message=FALSE, warning=FALSE}
 games <- readCSV500()
 subSet5 <- readCSVConf()
+# first look at some of the data
+attach(games)
+ggplot(subSet5, aes(x = crowdFactor, y = points, color = blocks, size = steals)) + 
+  geom_point()
+
+ggplot(games, aes(x = efficiency_game_score, y = points, color = home_away, size = result)) + 
+  geom_point()
+
+ggplot(games, aes(x = efficiency_game_score, y = defensive_rating, color = home_away, size = result)) + 
+  geom_point()
+detach(games)
+
+
 ```
 ## a) Comparing Factors
 <!--
