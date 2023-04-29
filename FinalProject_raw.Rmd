@@ -19,7 +19,7 @@ library(GGally)
 <!-- Functions for project use -->
 # Project Functions
 ```{r}
-# function for crowd factor 
+# function for crowd factor (unused in final)
 cfGen1 <- function(cf) {
   y <- exp(logit(cf)) / (1 + exp(logit(cf)))
   return(y)
@@ -37,7 +37,7 @@ cfGen2 <- function(cf, crowd) {
   
   return(y)
 }
-
+# read csv for games statistics
 readCSV500 <- function() {
   games <- read.csv("tidy500_conf_true.csv")
   attach(games)
@@ -48,7 +48,7 @@ readCSV500 <- function() {
   detach(games)
   return(games)
 }
-# function to read tidy500_conf_true.csv 
+# function to read tidy500_conf_true.csv, applies crowFactor transformation
 readCSVConf <- function() {
   dat <- read.csv("tidy500_conf_true.csv")
   attach(dat)
@@ -84,7 +84,7 @@ readCSVConf <- function() {
 }
 
 ```
-# 1) Initial Testing
+# A) Initial Testing
 <!--
   Initial look at data.
 -->
@@ -93,13 +93,16 @@ games <- readCSV500()
 subSet5 <- readCSVConf()
 # first look at some of the data
 attach(games)
-ggplot(subSet5, aes(x = crowdFactor, y = points, color = blocks, size = steals)) + 
+ggplot(subSet5, aes(x = crowdFactor, y = points, color = blocks, 
+                    size = steals)) + 
   geom_point()
 
-ggplot(games, aes(x = efficiency_game_score, y = points, color = home_away, size = result)) + 
+ggplot(games, aes(x = efficiency_game_score, y = points, 
+                  color = home_away, size = result)) + 
   geom_point()
 
-ggplot(games, aes(x = efficiency_game_score, y = defensive_rating, color = home_away, size = result)) + 
+ggplot(games, aes(x = efficiency_game_score, y = defensive_rating, 
+                  color = home_away, size = result)) + 
   geom_point()
 detach(games)
 
@@ -161,14 +164,15 @@ detach(games)
 *Our Chi-squared test for independence gives us a p-value *$p=0.0739$ *: Our null hypothesis is that there is not a significant relationship between home_away and the result of the game. We later improve on this by creating the crowdFactor variable.*
 
 
-## b) Obvious Models
+# B) Obvious Models
 <!--
   Testing with points scored as response.
   Various models.
 -->
 ```{r}
 attach(games)
-subSet1 <- data.frame(result, attendance, points, three_points_pct, two_points_pct, free_throws_pct, true_shooting_att)
+subSet1 <- data.frame(result, attendance, points, three_points_pct, 
+                      two_points_pct, free_throws_pct, true_shooting_att)
 detach(games)
 attach(subSet1)
 subSet1 <- subSet1 %>%
@@ -233,7 +237,8 @@ detach(subSet2)
 ```
 <!-- Efficiency Game Score: (Points) + (0.4*Field Goals Made) - (0.7*Field Goals Attempted) - (0.4*Free Throws Missed) + (0.7*Offensive Rebounds) + (0.3*Defensive Rebounds) + (Steals) + (0.7*Assists) + (0.7*Blocks) – (0.4*Personal Fouls) – (Turnovers) -->
 *The definition for efficiency game score is given by data source as:*
-$$(\text{points})+(0.4\cdot\text{fieldGoals})-(0.7\cdot\text{fieldGoalsAtt}) - (0.4\text{fieldGoalsMiss})+(0.7\cdot\text{offensiveRbd})+(0.3\cdot\text{defensiveRbd})+(\text{steals})+(0.7\cdot\text{assists})+(0.7\cdot\text{blocks})-(0.4\cdot\text{personalFouls})-(\text{turnovers})$$
+$$(\text{points})+(0.4\cdot\text{fieldGoals})-(0.7\cdot\text{fieldGoalsAtt}) - (0.4\text{fieldGoalsMiss})+(0.7\cdot\text{offensiveRbd})+(0.3\cdot\text{defensiveRbd})$$
+$$+(\text{steals})+(0.7\cdot\text{assists})+(0.7\cdot\text{blocks})-(0.4\cdot\text{personalFouls})-(\text{turnovers})$$
 
 
 <!--
@@ -255,23 +260,19 @@ predictorCor <- cor(subSet2)
 corrplot(predictorCor)
 
 # make a multiple logistic regression model
-multiGLM1.1 <- glm(result ~ efficiency_game_score + defensive_rating, family=binomial("logit"))
+multiGLM1.1 <- glm(result ~ efficiency_game_score + defensive_rating,
+                   family=binomial("logit"))
 summary(multiGLM1.1)
 detach(subSet2)
 ```
 *We see, perhaps unsurprisingly, that both efficiency_game_score and defensive_rating are significant predictors in a team's result.*
 
-## c) Ratio in Model 
+## a) Ratio in Model 
 <!--
   Trying a ratio in our second multiple regression model
 -->
 ```{r}
 attach(games)
-qqnorm(assists_turnover_ratio)
-qqline(assists_turnover_ratio)
-# assist/turnover is not normal
-qqnorm(log(assists_turnover_ratio))
-qqline(log(assists_turnover_ratio))
 
 subSet3 <- data.frame(three_points_pct, two_points_pct, assists_turnover_ratio)
 subSet3 <- subSet3  %>%
@@ -282,16 +283,15 @@ pairs(subSet3)
 detach(games)
 attach(subSet3)
 
-multiGLM2 <- glm(result ~ three_points_pct + two_points_pct + assists_turnover_ratio, family=binomial("logit"))
+multiGLM2 <- glm(result ~ three_points_pct + two_points_pct + 
+                   assists_turnover_ratio, family=binomial("logit"))
 summary(multiGLM2)
 
-multiGLM2.1 <- glm(result ~ three_points_pct + two_points_pct + log(assists_turnover_ratio), family=binomial("logit"))
-summary(multiGLM2.1)
 detach(subSet3)
 ```
 *Transforming assist/turnover ratio logarithmically did not improve the p-value significantly.*
 
-# 2) Developing Confidence Statistic
+# C) Developing Confidence Statistic
 ## a) Initial Testing
 <!--
   Second multiple regression model using home/away attendance modifier. 
@@ -353,15 +353,6 @@ roc
 # plot ROC curve
 plot(roc) # ROC curve
 abline(0,1)
-# get area
-auc = performance(pred1, measure = "auc")
-auc@y.values
-# Accuracy
-acc = performance(pred1, measure = "acc")
-### Find the cutoff using the highest accuracy
-which.max(unlist(acc@y.values)) # the highest accuracy
-unlist(acc@y.values)[9] # 80%
-unlist(acc@x.values)[9] # interpret cuttoff!!
 detach(subSet5)
 ```
 *We see an p-value of *$p=0.000325$ *in our goodness of fit test, indicating we can reject the null hypothesis that the model is fit to the data.*
@@ -376,7 +367,6 @@ Adding more predictors for team confidence statistic
 attach(subSet5)
 multiGLM4 <- glm(result ~ crowdFactor + blocks + fast_break_made)
 summary(multiGLM4)
-hist(crowdFactor, breaks=100)
 detach(subSet5)
 ```
 *Not a bad start to adding variables to our sought after team confidence statistic. We have a somewhat significant p-value at *$p\approx0.056$.
