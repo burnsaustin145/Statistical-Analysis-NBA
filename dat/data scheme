@@ -1,0 +1,38 @@
+- I want just a flat scheme w/ which game as a row variable
+    + I was wondering is there some issue with splitting games by team, does this mean that half of observations are
+      dependent on the other half?
+
+      Attendence 'assists': 19, 'assists_turnover_ratio': 1.58, 'bench_points': 25, 'biggest_lead': 2, 'blocked_att': 9,
+       'blocks': 9, 'coach_ejections': 0, 'coach_tech_fouls': 0, 'defensive_points_per_possession': 1.24,
+       'defensive_rating': 117.67976278725, 'defensive_rebounds': 39, 'effective_fg_pct': 54.2, 'efficiency': 103,
+       'efficiency_game_score': 75.0, 'ejections': 0, 'fast_break_att': 8, 'fast_break_made': 5, 'fast_break_pct': 62.5,
+       'fast_break_pts': 15, 'field_goals_att': 84, 'field_goals_made': 37, 'field_goals_pct': 44.0, 'flagrant_fouls': 1,
+       'foulouts': 0, 'fouls_drawn': 19, 'free_throws_att': 23, 'free_throws_made': 13, 'free_throws_pct': 56.5, 'minutes': '4:00:00',
+       'offensive_fouls': 1, 'offensive_points_per_possession': 1.02, 'offensive_rating': 101.840971406189, 'offensive_rebounds': 5,
+       'opponent_possessions': 107.92,
+
+Continuous variables:
+By player:
+    assists_turnover_ratio
+    defensive_rating
+    defensive_rebounds_pct
+    effective_fg_pct
+    efficiency_game_score
+    efficiency
+    fast_break_pct
+    field_goals_pct
+    free_throws_pct
+    minutes
+    offensive_rating
+    offensive_rebounds_pct
+    points_in_paint_pct
+    rebounds_pct
+    second_chance_pct
+    steals_pct
+    three_points_pct
+    true_shooting_att
+    true_shooting_pct
+    turnovers_pct
+    two_points_pct
+                    + so we got plenty of continuous variables, though most are percentages (0, 100), ratios, or statistics (rating etc.)
+                    
