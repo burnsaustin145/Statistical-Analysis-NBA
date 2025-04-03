@@ -3,24 +3,6 @@ import pprint as pp
 import csv
 
 
-def write_csv(team, game_ids, dat, to_file, write, labels, stats_keys):
-    write.writerow(labels)
-    for id in game_ids:
-        currRow = []
-        currRow.append(id)
-        teamPts = dat[id][team]['points']
-        otherPts = dat[id]['home' if team == 'away' else 'away']['points']
-        currRow.append(teamPts)
-        currRow.append('win' if teamPts > otherPts else 'loss')
-        try:
-            currRow.append(dat[id]['attendance'])
-        except:
-            currRow.append("noinfo")
-        for stat in stats_keys:
-            currRow.append(dat[id]['home']['statistics'][stat])
-        write.writerow(currRow)
-    to_file.close()
-
 def write_csv_with_location(game_ids, dat, to_file, write, labels, stats_keys, include_capacity=False):
     """Write CSV with home/away information and optionally venue capacity."""
     if "home_away" not in labels:
@@ -73,7 +55,7 @@ def generate_initial_labels(dat):
     # id->attendance
     return stats_keys, game_ids
 
-def generate_csv(stats_keys, game_ids, csv_name, include_capacity=True):
+def generate_csv(stats_keys, game_ids, csv_name, dat, include_capacity=True):
     """Generate CSV file with game data."""
     with open(csv_name, mode='w') as to_file:
         write = csv.writer(to_file, delimiter=',', quotechar='"')
@@ -82,23 +64,22 @@ def generate_csv(stats_keys, game_ids, csv_name, include_capacity=True):
             column_labels.append(lab)
         write_csv_with_location(game_ids, dat, to_file, write, column_labels, stats_keys, include_capacity)
 
-def append_to_csv(game_id, dat, csv_name, stats_keys, include_capacity=True):
-    """Append a single game's data to an existing CSV file."""
+def write_to_csv(game_id, dat, csv_name, stats_keys, include_capacity=True):
+    """Write a single game's data to an existing CSV file."""
     import os
     file_exists = os.path.isfile(csv_name)
     
-    with open(csv_name, mode='a') as to_file:
+    with open(csv_name, mode='w') as to_file:
         write = csv.writer(to_file, delimiter=',', quotechar='"')
         
-        # Write header if file doesn't exist
-        if not file_exists:
-            column_labels = ['Game Id', 'points', 'result', 'attendance']
-            for lab in stats_keys:
-                column_labels.append(lab)
-            column_labels.append("home_away")
-            if include_capacity:
-                column_labels.append("capacity")
-            write.writerow(column_labels)
+
+        column_labels = ['Game Id', 'points', 'result', 'attendance']
+        for lab in stats_keys:
+            column_labels.append(lab)
+        column_labels.append("home_away")
+        if include_capacity:
+            column_labels.append("capacity")
+        write.writerow(column_labels)
         
         # Write data for both home and away
         for location in ("home", "away"):
@@ -144,10 +125,10 @@ if __name__ == "__main__":
     keys, game_ids = generate_initial_labels(dat)
     print(game_ids)
     # Generate full CSV
-    generate_csv(keys, game_ids, "tidy10_conf_true.csv")
+    generate_csv(keys, game_ids, dat, "tidy10_conf_true.csv")
     
     # Example of appending a single game (if it existed)
-    # append_to_csv(game_ids[0], dat, "realtime_games.csv", keys)
+    # write_to_csv(game_ids[0], dat, "realtime_games.csv", keys)
 
 
 
