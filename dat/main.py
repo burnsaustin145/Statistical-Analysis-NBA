@@ -21,94 +21,114 @@ def write_csv(team, game_ids, dat, to_file, write, labels, stats_keys):
         write.writerow(currRow)
     to_file.close()
 
-
-def writeCSV2(gameIds, dat, toFile, write, labels, statsKeys):
-    labels.append("home_away")
+def write_csv_with_location(game_ids, dat, to_file, write, labels, stats_keys, include_capacity=False):
+    """Write CSV with home/away information and optionally venue capacity."""
+    if "home_away" not in labels:
+        labels.append("home_away")
+    if include_capacity and "capacity" not in labels:
+        labels.append("capacity")
+    
     write.writerow(labels)
-    for gameId in gameIds:
-        for location in ("home", "away"):
-            currRow = [gameId]
-            teamPts = dat[gameId][location]['points']
-            otherPts = dat[gameId]['home' if location == 'away' else 'away']['points']
-            currRow.append(teamPts)
-            currRow.append('win' if teamPts > otherPts else 'loss')
+    
+    for game_id in game_ids:
+        print(game_id)
+        if dat[game_id]['status'] != 'no_data':
+            print("not no data")
+            for location in ("home", "away"):
+                curr_row = [game_id]
+                team_pts = dat[game_id][location]['points']
+                other_pts = dat[game_id]['home' if location == 'away' else 'away']['points']
+                curr_row.append(team_pts)
+                curr_row.append('win' if team_pts > other_pts else 'loss')
             try:
-                currRow.append(dat[gameId]['attendance'])
+                curr_row.append(dat[game_id]['attendance'])
             except:
-                currRow.append("no_info")
-            for stat in statsKeys:
-                currRow.append(dat[gameId][location]['statistics'][stat])
-            currRow.append(location)
-            write.writerow(currRow)
-    toFile.close()
-
-def writeCSV3(gameIds, dat, toFile, write, labels, statsKeys):
-    labels.append("home_away")
-    labels.append("capacity")
-    write.writerow(labels)
-    for gameId in gameIds:
-        for location in ("home", "away"):
-            currRow = [gameId]
-            teamPts = dat[gameId][location]['points']
-            otherPts = dat[gameId]['home' if location == 'away' else 'away']['points']
-            currRow.append(teamPts)
-            currRow.append('win' if teamPts > otherPts else 'loss')
-            try:
-                currRow.append(dat[gameId]['attendance'])
-            except:
-                currRow.append("no_info")
-            for stat in statsKeys:
+                curr_row.append("no_info")
+            
+            for stat in stats_keys:
                 try:
-                    currRow.append(dat[gameId][location]['statistics'][stat])
+                    curr_row.append(dat[game_id][location]['statistics'][stat])
                 except:
-                    currRow.append("NA")
-            currRow.append(location)
-            currRow.append(dat[gameId]["venue"]["capacity"])
-            write.writerow(currRow)
-    toFile.close()
+                    curr_row.append("NA")
+            
+            curr_row.append(location)
+            
+            if include_capacity:
+                try:
+                    curr_row.append(dat[game_id]["venue"]["capacity"])
+                except:
+                    curr_row.append("NA")
+            
+            write.writerow(curr_row)
 
 def generate_initial_labels(dat):
-    gameIds = list(dat.keys())
+    game_ids = list(dat.keys())
     print("got ids")
-    statsKeys = list(dat[gameIds[0]]['home']['statistics'])
-    print(statsKeys)
-    statsKeys.remove('most_unanswered')
-    statsKeys.remove('periods')
+    stats_keys = list(dat[game_ids[0]]['home']['statistics'])
+    print(stats_keys)
+    stats_keys.remove('most_unanswered')
+    stats_keys.remove('periods')
     # from dat: id->home/away->points
     # id->home/away->statistics->{stats list all vars here}
     # id->attendance
-    return statsKeys, gameIds
+    return stats_keys, game_ids
 
+def generate_csv(stats_keys, game_ids, csv_name, include_capacity=True):
+    """Generate CSV file with game data."""
+    with open(csv_name, mode='w') as to_file:
+        write = csv.writer(to_file, delimiter=',', quotechar='"')
+        column_labels = ['Game Id', 'points', 'result', 'attendance']
+        for lab in stats_keys:
+            column_labels.append(lab)
+        write_csv_with_location(game_ids, dat, to_file, write, column_labels, stats_keys, include_capacity)
 
-#writing csv for initial variable set
-def generate_vars1(statsKeys, gameIds):
-    with open('tidy200.csv', mode='w') as toFile:
-        write = csv.writer(toFile, delimiter=',', quotechar='"')
-        columnLabels = ['Game Id', 'points', 'result', 'attendance']
-        for lab in statsKeys:
-            columnLabels.append(lab)
-        write_csv('home', gameIds, dat, toFile, write, columnLabels, statsKeys)
+def append_to_csv(game_id, dat, csv_name, stats_keys, include_capacity=True):
+    """Append a single game's data to an existing CSV file."""
+    import os
+    file_exists = os.path.isfile(csv_name)
+    
+    with open(csv_name, mode='a') as to_file:
+        write = csv.writer(to_file, delimiter=',', quotechar='"')
+        
+        # Write header if file doesn't exist
+        if not file_exists:
+            column_labels = ['Game Id', 'points', 'result', 'attendance']
+            for lab in stats_keys:
+                column_labels.append(lab)
+            column_labels.append("home_away")
+            if include_capacity:
+                column_labels.append("capacity")
+            write.writerow(column_labels)
+        
+        # Write data for both home and away
+        for location in ("home", "away"):
+            curr_row = [game_id]
+            team_pts = dat[game_id][location]['points']
+            other_pts = dat[game_id]['home' if location == 'away' else 'away']['points']
+            curr_row.append(team_pts)
+            curr_row.append('win' if team_pts > other_pts else 'loss')
+            try:
+                curr_row.append(dat[game_id]['attendance'])
+            except:
+                curr_row.append("no_info")
+            
+            for stat in stats_keys:
+                try:
+                    curr_row.append(dat[game_id][location]['statistics'][stat])
+                except:
+                    curr_row.append("NA")
+            
+            curr_row.append(location)
+            
+            if include_capacity:
+                try:
+                    curr_row.append(dat[game_id]["venue"]["capacity"])
+                except:
+                    curr_row.append("NA")
+            
+            write.writerow(curr_row)
 
-
-# this generate funciton adds home/away variable (should refactor to select for multiple vars??
-def generate_vars2(statsKeys, gameIds, csv_name):
-    with open(csv_name, mode='w') as toFile:
-        write = csv.writer(toFile, delimiter=',', quotechar='"')
-        columnLabels = ['Game Id', 'points', 'result', 'attendance']
-        for lab in statsKeys:
-            columnLabels.append(lab)
-        writeCSV2(gameIds, dat, toFile, write, columnLabels, statsKeys)
-
-def generate_vars3(statsKeys, gameIds, csv_name):
-    with open(csv_name, mode='w') as toFile:
-        write = csv.writer(toFile, delimiter=',', quotechar='"')
-        columnLabels = ['Game Id', 'points', 'result', 'attendance']
-        for lab in statsKeys:
-            columnLabels.append(lab)
-        writeCSV3(gameIds, dat, toFile, write, columnLabels, statsKeys)
-
-
-def unPickle(jar_name):
+def unpickle(jar_name):
     try:
         with open(jar_name, 'rb') as handle:
             dat = pickle.load(handle)
@@ -119,24 +139,15 @@ def unPickle(jar_name):
 
 # some initial testing
 if __name__ == "__main__":
-
-    #dat = unPickle('pickledDat200.pickle')
-
-    # %% creating tidy200.csv for initial testing
-    # keys, gameIds = generateInitialLabels()
-    # varSet1(keys, gameIds)
-
-    # adding home/away stat to data
-    # keys, game_ids = generate_initial_labels(dat)
-    # generate_vars2(keys, game_ids, "tidy200_conf.csv")
-
-    # adding capacity to data
-    # generate_vars3(keys, game_ids, "tidy200_conf_true.csv")
-
-    # getting more data than everrr
-    dat = unPickle('pickledDat500.pickle')
+    # Load data
+    dat = unpickle('pickledData10.pickle')
     keys, game_ids = generate_initial_labels(dat)
-    generate_vars3(keys, game_ids, "tidy500_conf_true.csv")
+    print(game_ids)
+    # Generate full CSV
+    generate_csv(keys, game_ids, "tidy10_conf_true.csv")
+    
+    # Example of appending a single game (if it existed)
+    # append_to_csv(game_ids[0], dat, "realtime_games.csv", keys)
 
 
 
