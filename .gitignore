@@ -3,3 +3,12 @@
 .RData
 .Ruserdata
 STA5030FinalProject.Rproj
+.env
+pickledData10.pickle
+pickledData500.pickle
+pickledData1000.pickle
+pickledData2000.pickle
+pickledData3000.pickle
+pickledData4000.pickle
+pickledData5000.pickle
+.cursorrules
